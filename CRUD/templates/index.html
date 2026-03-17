@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='menu.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Menu Principal</title>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('index') }}" class="bt_home"><i class="fas fa-home"></i></a>
+        <span class="texto_logo">MENU PRINCIPAL</span>
+    </header>
+    <div class="cnt_principal">
+        <h2>Painel de Controle</h2>
+        <div class="cnt_opcoes_menu">
+            <a href="{{ url_for('criar') }}" class="cartao_menu">
+                <i class="fas fa-plus-circle fa-3x"></i>
+                <p style="margin-top:15px">Criar Nova Tarefa</p>
+            </a>
+            <a href="{{ url_for('status') }}" class="cartao_menu">
+                <i class="fas fa-list-ul fa-3x"></i>
+                <p style="margin-top:15px">Visualizar Status</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

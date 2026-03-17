@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='editar.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Editar Tarefa</title>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('index') }}" class="bt_home"><i class="fas fa-home"></i></a>
+        <span class="texto_logo">EDITAR TAREFA</span>
+    </header>
+    <div class="cnt_formulario">
+        <form method="POST">
+            <label>Funcionário:</label>
+            <select name="funcionario" required>
+                {% for nome in funcionarios %}
+                <option value="{{ nome }}" {% if tarefa['funcionario'] == nome %}selected{% endif %}>
+                    {{ nome }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label>Função:</label>
+            <select name="funcao">
+                {% set funcoes = ['Manutenção', 'Limpeza', 'TI', 'Logística'] %}
+                {% for f in funcoes %}
+                <option value="{{ f }}" {% if tarefa['funcao'] == f %}selected{% endif %}>
+                    {{ f }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label>Local:</label>
+            <input name="local" type="text" value="{{ tarefa['local'] }}" required>
+
+            <label>Tarefa:</label>
+            <textarea name="tarefa" rows="6" required>{{ tarefa['tarefa'] }}</textarea>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label>Prioridade:</label>
+                    <select name="prioridade">
+                        <option value="baixa" {% if tarefa['prioridade'] == 'baixa' %}selected{% endif %}>Baixa</option>
+                        <option value="media" {% if tarefa['prioridade'] == 'media' %}selected{% endif %}>Média</option>
+                        <option value="alta" {% if tarefa['prioridade'] == 'alta' %}selected{% endif %}>Alta</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Registrado por (Gestor):</label>
+                    <select name="gestor" required>
+                        {% for nome in gestores %}
+                        <option value="{{ nome }}" {% if tarefa['responsavel_registro'] == nome %}selected{% endif %}>
+                            {{ nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="cnt_bt">
+                <a href="{{ url_for('status') }}" class="bt_cancelar">CANCELAR</a>
+                <button type="submit" class="bt_primario">SALVAR ALTERAÇÕES</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

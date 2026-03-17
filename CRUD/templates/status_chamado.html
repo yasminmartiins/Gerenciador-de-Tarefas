@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='status.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Visualizar Chamados</title>
+</head>
+<body>
+    <header>
+    <div class="cnt_header_esquerda">
+        <a href="{{ url_for('index') }}" class="bt_home"><i class="fas fa-home"></i></a>
+        <span class="texto_logo">ACOMPANHAR TAREFAS</span>
+    </div>
+
+    <div class="cnt_header_direita">
+        <div class="cnt_busca_combinada">
+            <i class="fas fa-search icone_busca"></i>
+            <input 
+                type="text" 
+                id="input_busca" 
+                placeholder="Pesquisar tarefa..." 
+                onkeyup="filtrarCards()"
+                class="input_busca_header"
+            >
+            <button class="bt_filtro_header" onclick="toggleFiltro()">
+                <i class="fas fa-filter"></i>
+            </button>
+            
+            <div id="painel_filtros" class="painel_filtros_oculto">
+                <h3>Filtros</h3>
+
+                <label>Funcionário:</label>
+                <select id="filtro_funcionario" onchange="filtrarCards()">
+                    <option value="">Todos</option>
+                    {% for nome in funcionarios %}
+                    <option value="{{ nome }}">{{ nome }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Gestor:</label>
+                <select id="filtro_gestor" onchange="filtrarCards()">
+                    <option value="">Todos</option>
+                    {% for nome in gestores %}
+                    <option value="{{ nome }}">{{ nome }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Prioridade:</label>
+                <select id="filtro_prioridade" onchange="filtrarCards()">
+                    <option value="">Todas</option>
+                    <option value="baixa">Baixa</option>
+                    <option value="media">Média</option>
+                    <option value="alta">Alta</option>
+                </select>
+                <button class="bt_limpar_filtros" onclick="limparFiltros()">Limpar</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+    {% macro desenhar_cartao(tarefa) %}
+    <div class="cartao_chamado" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" id="card-{{ tarefa[0] }}">
+        <div class="cabecalho_cartao">
+            <div class="prioridade_nivel {{ tarefa[5] | lower }}">
+                <span style="margin-right: 10px;">PRIORIDADE</span>
+                <div class="barra"></div><div class="barra"></div><div class="barra"></div>
+            </div>
+            <span class="id_chamado">#{{ tarefa[0] }}</span>
+        </div>
+        <div class="corpo_cartao">
+            <h3 class="titulo_tarefa">{{ tarefa[4] }}</h3>
+            <div class="info_principal">
+                <span class="nome_func"><i class="fas fa-user"></i> {{ tarefa[1] }}</span>
+                <span class="cargo_func">{{ tarefa[2] }}</span>
+            </div>
+            <div class="info_detalhes">
+                <p style="margin-bottom: 10px;"><strong>Local:</strong> {{ tarefa[3] }}</p>
+                <p><strong>Gestor:</strong> {{ tarefa[9] }}</p>
+            </div>
+        </div>
+        <div class="cnt_bt_cartao">
+            <a href="{{ url_for('editar', id=tarefa[0]) }}" class="bt_editar"><i class="fas fa-edit"></i> EDITAR</a>
+            <a href="{{ url_for('excluir', id=tarefa[0]) }}" class="bt_excluir" onclick="return confirm('Tem certeza que deseja excluir essa tarefa?')"><i class="fas fa-trash-alt"></i> EXCLUIR</a>
+        </div>
+    </div>
+    {% endmacro %}
+
+    <div class="cnt_kanban">
+        <div class="cnt_container_kanban">
+            <div class="coluna_kanban" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" id="pendente">
+                <h2 class="titulo_coluna">Pendente</h2>
+                <div class="lista_chamados">
+                    {% for tarefa in tarefas if tarefa[6] == 'pendente' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
+                </div>
+            </div>
+
+            <div class="coluna_kanban" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" id="andamento">
+                <h2 class="titulo_coluna">Em Andamento</h2>
+                <div class="lista_chamados">
+                    {% for tarefa in tarefas if tarefa[6] == 'andamento' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
+                </div>
+            </div>
+
+            <div class="coluna_kanban" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" id="concluido">
+                <h2 class="titulo_coluna">Concluído</h2>
+                <div class="lista_chamados">
+                    {% for tarefa in tarefas if tarefa[6] == 'concluido' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function allowDrop(ev) { ev.preventDefault(); ev.currentTarget.classList.add('over'); }
+        function dragLeave(ev) { ev.currentTarget.classList.remove('over'); }
+        function drag(ev) { ev.target.classList.add('dragging'); ev.dataTransfer.setData("text", ev.target.id); }
+        function dragEnd(ev) { 
+            ev.target.classList.remove('dragging');
+            document.querySelectorAll('.coluna_kanban').forEach(col => col.classList.remove('over'));
+        }
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const card = document.getElementById(data);
+            const dropTarget = ev.currentTarget.querySelector('.lista_chamados');
+            const novoStatus = ev.currentTarget.id;
+
+            if (dropTarget && card) {
+                dropTarget.appendChild(card);
+                fetch('/atualizar_status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({id: data.replace('card-', ''), status: novoStatus})
+                });
+            }
+            ev.currentTarget.classList.remove('over');
+        }
+
+        function toggleFiltro() {
+            document.getElementById('painel_filtros').classList.toggle('painel_filtros_visivel');
+        }
+
+        function filtrarCards() {
+            const termoBusca = document.getElementById('input_busca').value.toLowerCase();
+            const prioFiltro = document.getElementById('filtro_prioridade').value.toLowerCase();
+            const funcFiltro = document.getElementById('filtro_funcionario').value.toLowerCase();
+            const gestFiltro = document.getElementById('filtro_gestor').value.toLowerCase();
+            
+            const cards = document.querySelectorAll('.cartao_chamado');
+
+            cards.forEach(card => {
+                const descricao = card.querySelector('.titulo_tarefa').innerText.toLowerCase();
+                const nomeFunc = card.querySelector('.nome_func').innerText.toLowerCase();
+                const nomeGest = card.querySelector('.info_detalhes').innerText.toLowerCase(); // Supondo que o nome do gestor esteja aqui
+                
+                const bateBusca = descricao.includes(termoBusca);
+                const batePrio = prioFiltro === "" || card.querySelector('.prioridade_nivel').classList.contains(prioFiltro);
+                const bateFunc = funcFiltro === "" || nomeFunc.includes(funcFiltro);
+                const bateGest = gestFiltro === "" || nomeGest.includes(gestFiltro);
+
+                if (bateBusca && batePrio && bateFunc && bateGest) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        function limparFiltros() {
+            document.getElementById('input_busca').value = "";
+            document.getElementById('filtro_prioridade').value = "";
+            document.getElementById('filtro_funcionario').value = "";
+            document.getElementById('filtro_gestor').value = "";
+            filtrarCards();
+        }
+    </script>
+</body>
+</html>
