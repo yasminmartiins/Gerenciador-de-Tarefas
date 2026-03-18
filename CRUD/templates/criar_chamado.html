@@ -23,10 +23,9 @@
 
             <label>Função:</label>
             <select name="funcao">
-                <option>Manutenção</option>
-                <option>Limpeza</option>
-                <option>TI</option>
-                <option>Logística</option>
+                {% for nome in funcoes %}
+                <option value="{{ nome }}">{{ nome }}</option>
+                {% endfor %}
             </select>
 
             <label>Local:</label>

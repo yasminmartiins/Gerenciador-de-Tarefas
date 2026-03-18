@@ -47,6 +47,14 @@
                     {% endfor %}
                 </select>
 
+                <label>Função:</label>
+                <select id="filtro_funcao" onchange="filtrarCards()">
+                    <option value="">Todos</option>
+                    {% for nome in funcoes %}
+                    <option value="{{ nome }}">{{ nome }}</option>
+                    {% endfor %}
+                </select>
+
                 <label>Prioridade:</label>
                 <select id="filtro_prioridade" onchange="filtrarCards()">
                     <option value="">Todas</option>
@@ -61,7 +69,9 @@
 </header>
 
     {% macro desenhar_cartao(tarefa) %}
-    <div class="cartao_chamado" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" id="card-{{ tarefa[0] }}">
+    <div class="cartao_chamado" 
+     onclick="abrirModal('{{ tarefa[4] }}', '{{ tarefa[0] }}', '{{ tarefa[1] }}', '{{ tarefa[9] }}', '{{ tarefa[3] }}', '{{ tarefa[2] }}')"
+     draggable="true">
         <div class="cabecalho_cartao">
             <div class="prioridade_nivel {{ tarefa[5] | lower }}">
                 <span style="margin-right: 10px;">PRIORIDADE</span>
@@ -112,6 +122,10 @@
         </div>
     </div>
 
+    {% include 'modal_status.html' %}
+
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
     <script>
         function allowDrop(ev) { ev.preventDefault(); ev.currentTarget.classList.add('over'); }
         function dragLeave(ev) { ev.currentTarget.classList.remove('over'); }
@@ -147,13 +161,14 @@
             const prioFiltro = document.getElementById('filtro_prioridade').value.toLowerCase();
             const funcFiltro = document.getElementById('filtro_funcionario').value.toLowerCase();
             const gestFiltro = document.getElementById('filtro_gestor').value.toLowerCase();
+            const funcaoFiltro = document.getElementById('filtro_funcao').value.toLowerCase();
             
             const cards = document.querySelectorAll('.cartao_chamado');
 
             cards.forEach(card => {
                 const descricao = card.querySelector('.titulo_tarefa').innerText.toLowerCase();
                 const nomeFunc = card.querySelector('.nome_func').innerText.toLowerCase();
-                const nomeGest = card.querySelector('.info_detalhes').innerText.toLowerCase(); // Supondo que o nome do gestor esteja aqui
+                const nomeGest = card.querySelector('.info_detalhes').innerText.toLowerCase(); 
                 
                 const bateBusca = descricao.includes(termoBusca);
                 const batePrio = prioFiltro === "" || card.querySelector('.prioridade_nivel').classList.contains(prioFiltro);
@@ -173,7 +188,23 @@
             document.getElementById('filtro_prioridade').value = "";
             document.getElementById('filtro_funcionario').value = "";
             document.getElementById('filtro_gestor').value = "";
+            document.getElementById('filtro_funcao').value = "";
             filtrarCards();
+        }
+        function abrirModal(titulo, id, func, gestor, local, setor) {
+            document.getElementById('modal_titulo').innerText = titulo;
+            document.getElementById('modal_id').innerText = '#' + id;
+            document.getElementById('modal_func').innerText = func;
+            document.getElementById('modal_gestor').innerText = gestor;
+            document.getElementById('modal_local').innerText = local;
+            document.getElementById('modal_setor').innerText = setor;
+            
+            const modal = document.getElementById('modal_detalhes');
+            modal.style.display = "block";
+        }
+
+        function fecharModal() {
+            document.getElementById('modal_detalhes').style.display = "none";
         }
     </script>
 </body>

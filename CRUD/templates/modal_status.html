@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Visualizar Chamados</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='modal_status.css') }}">
+</head>
+<body>
+    <div id="modal_detalhes" class="modal_kanban">
+        <div class="conteudo_modal">
+            <span class="fechar_modal" onclick="fecharModal()">&times;</span>
+            
+            <header class="header_modal">
+                <h2 id="modal_titulo">Título da Tarefa</h2>
+                <span id="modal_id">#000</span>
+            </header>
+
+            <div class="corpo_modal">
+                <div class="secao_modal">
+                    <label><i class="fas fa-align-left"></i> Descrição</label>
+                    <div id="modal_descricao" class="texto_descricao"></div>
+                </div>
+
+                <div class="grid_detalhes">
+                    <div class="item_detalhe">
+                        <label>Funcionário</label>
+                        <p id="modal_func"></p>
+                    </div>
+                    <div class="item_detalhe">
+                        <label>Gestor Responsável</label>
+                        <p id="modal_gestor"></p>
+                    </div>
+                </div>
+
+                <div class="grid_detalhes">
+                    <div class="item_detalhe">
+                        <label>Localização</label>
+                        <p id="modal_local"></p>
+                    </div>
+                    <div class="item_detalhe">
+                        <label>Setor</label>
+                        <p id="modal_setor"></p>
+                    </div>
+                </div>
+
+                <div class="secao_modal">
+                    <label><i class="fas fa-comments"></i> Comentários</label>
+                    <div class="cnt_comentarios">
+                        <textarea id="novo_comentario" placeholder="Escreva um comentário..."></textarea>
+                        <button class="bt_comentar">Enviar</button>
+                    </div>
+                </div>
+
+                <div class="secao_modal">
+                    <label><i class="fas fa-paperclip"></i> Anexos</label>
+                    <div class="area_upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Clique ou arraste arquivos para anexar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

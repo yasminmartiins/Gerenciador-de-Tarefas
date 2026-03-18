@@ -57,6 +57,14 @@ def excluir_tarefa(id_tarefa):
     conn.commit()
     conn.close()
 
+def listar_funcoes():
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute('SELECT nome FROM funcoes ORDER BY nome ASC')
+    nomes = [linha[0] for linha in cursor.fetchall()]
+    conn.close()
+    return nomes
+
 def listar_funcionarios():
     conn = conectar()
     cursor = conn.cursor()

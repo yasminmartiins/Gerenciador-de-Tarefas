@@ -22,21 +22,25 @@ def criar():
     
     lista_funcs = models.listar_funcionarios()
     lista_gestores = models.listar_gestores()
+    lista_funcoes = models.listar_funcoes()
     
     return render_template('criar_chamado.html', 
                            funcionarios=lista_funcs, 
-                           gestores=lista_gestores)
+                           gestores=lista_gestores,
+                           funcoes=lista_funcoes,)
 
 @app.route('/status')
 def status():
     todas = models.listar_todas_tarefas()
     lista_funcs = models.listar_funcionarios()
     lista_gestores = models.listar_gestores()
+    lista_funcoes = models.listar_funcoes()
     
     return render_template('status_chamado.html', 
                            tarefas=todas, 
                            funcionarios=lista_funcs, 
-                           gestores=lista_gestores)
+                           gestores=lista_gestores,
+                           funcoes=lista_funcoes,)
 
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
@@ -54,11 +58,13 @@ def editar(id):
     tarefa_existente = models.buscar_tarefa_por_id(id)
     lista_funcs = models.listar_funcionarios()
     lista_gestores = models.listar_gestores()
+    lista_funcoes = models.listar_funcoes()
     
     return render_template('editar_chamado.html', 
                            tarefa=tarefa_existente, 
                            funcionarios=lista_funcs, 
-                           gestores=lista_gestores)
+                           gestores=lista_gestores,
+                           funcoes=lista_funcoes,)
 
 @app.route('/atualizar_status', methods=['POST'])
 def atualizar_status():

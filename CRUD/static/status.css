@@ -251,7 +251,7 @@ select option {
     padding-left: 5px;
 }
 
-#filtro_prioridade, #filtro_funcionario, #filtro_gestor {
+#filtro_prioridade, #filtro_funcionario, #filtro_gestor, #filtro_funcao {
     width: 100%;
     padding: 12px;
     background: rgba(255, 255, 255, 0.08);
@@ -265,7 +265,7 @@ select option {
     transition: 0.3s;
 }
 
-#filtro_prioridade:focus, #filtro_funcionario:focus, #filtro_gestor:focus {
+#filtro_prioridade:focus, #filtro_funcionario:focus, #filtro_gestor:focus, #filtro_funcao:focus {
     border-color: #3498db;
     background: rgba(255, 255, 255, 0.15);
 }

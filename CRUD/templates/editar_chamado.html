@@ -25,10 +25,9 @@
 
             <label>Função:</label>
             <select name="funcao">
-                {% set funcoes = ['Manutenção', 'Limpeza', 'TI', 'Logística'] %}
-                {% for f in funcoes %}
-                <option value="{{ f }}" {% if tarefa['funcao'] == f %}selected{% endif %}>
-                    {{ f }}
+                {% for nome in funcoes %}
+                <option value="{{ nome }}" {% if tarefa['funcao'] == nome %}selected{% endif %}>
+                    {{ nome }}
                 </option>
                 {% endfor %}
             </select>
