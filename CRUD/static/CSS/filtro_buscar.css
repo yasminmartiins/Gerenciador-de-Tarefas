@@ -1,0 +1,134 @@
+.cnt_busca_combinada {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+}
+
+.input_busca_header {
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px 10px 10px 40px; 
+    outline: none;
+    width: 200px;
+    transition: width 0.3s;
+}
+
+.input_busca_header:focus {
+    width: 300px;
+}
+
+.icone_busca {
+    position: absolute;
+    left: 15px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.bt_filtro_header {
+    background: rgba(52, 152, 219, 0.3);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.bt_filtro_header:hover {
+    background: rgba(52, 152, 219, 0.6);
+}
+
+#painel_filtros {
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background: rgba(15, 15, 15, 0.85); 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 25px;
+    border-radius: 24px;
+    z-index: 1000;
+    width: 280px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+    display: none; 
+    animation: fadeInSlide 0.3s ease-out;
+}
+
+#painel_filtros h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#painel_filtros label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 8px;
+    padding-left: 5px;
+}
+
+#filtro_prioridade, #filtro_funcionario, #filtro_gestor, #filtro_funcao {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 25px;
+    transition: 0.3s;
+}
+
+#filtro_prioridade:focus, #filtro_funcionario:focus, #filtro_gestor:focus, #filtro_funcao:focus {
+    border-color: #3498db;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.bt_limpar_filtros {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(231, 76, 60, 0.4);
+    color: #ff7675;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.bt_limpar_filtros:hover {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #ff7675;
+    transform: translateY(-2px);
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.painel_filtros_visivel {
+    display: block !important;
+}

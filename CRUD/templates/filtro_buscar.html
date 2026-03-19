@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/filtro_buscar.css') }}">
+    <title>Filtro Buscar</title>
+</head>
+<body>
+    <div class="cnt_busca_combinada">
+        <i class="fas fa-search icone_busca"></i>
+        <input 
+            type="text" 
+            id="input_busca" 
+            placeholder="Pesquisar tarefa..." 
+            onkeyup="filtrarCards()"
+            class="input_busca_header">
+
+        <button class="bt_filtro_header" onclick="toggleFiltro()">
+            <i class="fas fa-filter"></i>
+        </button>
+        
+        <div id="painel_filtros" class="painel_filtros_oculto">
+            <h3>Filtros</h3>
+
+            <label>Funcionário:</label>
+            <select id="filtro_funcionario" onchange="filtrarCards()">
+                <option value="">Todos</option>
+                {% for nome in funcionarios %}
+                <option value="{{ nome }}">{{ nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Gestor:</label>
+            <select id="filtro_gestor" onchange="filtrarCards()">
+                <option value="">Todos</option>
+                {% for nome in gestores %}
+                <option value="{{ nome }}">{{ nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Função:</label>
+            <select id="filtro_funcao" onchange="filtrarCards()">
+                <option value="">Todos</option>
+                {% for nome in funcoes %}
+                <option value="{{ nome }}">{{ nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Prioridade:</label>
+            <select id="filtro_prioridade" onchange="filtrarCards()">
+                <option value="">Todas</option>
+                <option value="baixa">Baixa</option>
+                <option value="media">Média</option>
+                <option value="alta">Alta</option>
+            </select>
+            <button class="bt_limpar_filtros" onclick="limparFiltros()">Limpar</button>
+        </div>
+    </div>
+</body>
+</html>

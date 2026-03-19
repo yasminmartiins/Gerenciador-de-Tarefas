@@ -2,8 +2,8 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='criar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/criar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Nova Tarefa</title>
 </head>
@@ -28,11 +28,11 @@
                 {% endfor %}
             </select>
 
-            <label>Local:</label>
-            <input name="local" type="text" placeholder="Local da atividade" required>
+            <label>Título da Tarefa:</label>
+            <input name="local" type="text" placeholder="Ex: Criar nova Tarefa" required>
 
-            <label>Tarefa:</label>
-            <textarea name="tarefa" rows="6" placeholder="O que deve ser feito?" required></textarea>
+            <label>Descrição:</label>
+            <textarea name="tarefa" rows="6" placeholder="Descreva os detalhes..." required></textarea>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div>

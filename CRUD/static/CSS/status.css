@@ -1,0 +1,168 @@
+header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px 30px;
+}
+
+select option {
+    background-color: #2c3e50; 
+}
+
+.cnt_kanban {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.cnt_container_kanban {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.coluna_kanban {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    max-width: 380px;
+}
+
+.coluna_kanban.over {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: #3498db;
+}
+
+.titulo_coluna {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+}
+
+.lista_chamados {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cartao_chamado {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 15px;
+    cursor: grab;
+}
+
+.cartao_chamado.dragging {
+    opacity: 0.4;
+    border: 1px dashed #3498db;
+}
+
+.cabecalho_cartao {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.titulo_tarefa {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    white-space: nowrap;      
+    overflow: hidden;         
+    text-overflow: ellipsis;
+}
+
+.info_principal {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nome_func {
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.cargo_func {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    margin-left: 20px;
+}
+
+.info_detalhes {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.cnt_bt_cartao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.bt_editar, .bt_excluir {
+    padding: 8px;
+    border-radius: 50px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.75rem;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bt_editar { background: rgba(52, 152, 219, 0.2); }
+.bt_editar:hover { background: rgba(52, 152, 219, 0.4); border-color: #3498db; }
+
+.bt_excluir { background: rgba(231, 76, 60, 0.2); }
+.bt_excluir:hover { background: rgba(231, 76, 60, 0.4); border-color: #e74c3c; }
+
+.prioridade_nivel { 
+    display: flex; 
+    gap: 4px; 
+    align-items: center; 
+}
+
+.barra { 
+    width: 12px; 
+    height: 4px; 
+    background: rgba(255, 255, 255, 0.1); 
+    border-radius: 10px; 
+}
+
+.prioridade_nivel.alta .barra { 
+    background: #ff7675; 
+    box-shadow: 0 0 5px #ff7675; 
+}
+
+.prioridade_nivel.media .barra:nth-child(2),
+.prioridade_nivel.media .barra:nth-child(3) { 
+    background: #f1c40f; 
+    box-shadow: 0 0 5px #f1c40f;
+}
+
+.prioridade_nivel.baixa .barra:nth-child(2) { 
+    background: #55efc4; 
+    box-shadow: 0 0 5px #55efc4;
+}
+
+.cnt_header_esquerda {
+    display: flex;
+    align-items: center;
+}
+
+.cnt_header_direita {
+    display: flex;
+    align-items: center;
+}

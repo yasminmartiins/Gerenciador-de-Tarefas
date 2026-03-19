@@ -47,7 +47,7 @@ def editar(id):
     if request.method == 'POST':
         funcionario = request.form.get('funcionario')
         funcao = request.form.get('funcao')
-        local = request.form.get('local')
+        local = request.form.get('local')  
         tarefa = request.form.get('tarefa')
         prioridade = request.form.get('prioridade').lower()
         gestor = request.form.get('gestor')
@@ -64,7 +64,7 @@ def editar(id):
                            tarefa=tarefa_existente, 
                            funcionarios=lista_funcs, 
                            gestores=lista_gestores,
-                           funcoes=lista_funcoes,)
+                           funcoes=lista_funcoes)
 
 @app.route('/atualizar_status', methods=['POST'])
 def atualizar_status():
