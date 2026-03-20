@@ -71,6 +71,16 @@
         </div>
     </div>
 
+    <div id="modal_preview" class="modal_kanban" onclick="fecharPreview()">
+        <span class="fechar_modal">&times;</span>
+        <div class="conteudo_preview" onclick="event.stopPropagation()">
+            <div id="container_preview"></div>
+            <div class="footer_preview">
+                <a id="link_download_direto" href="#" download class="bt_comentar">Baixar Original</a>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='JavaScript/modal-status.js') }}"></script>
 </body>
 </html>

@@ -17,41 +17,48 @@
             <label>Funcionário:</label>
             <select name="funcionario" required>
                 {% for nome in funcionarios %}
-                <option value="{{ nome }}">{{ nome }}</option>
+                <option value="{{ nome }}" {% if nome == tarefa['funcionario'] %}selected{% endif %}>
+                    {{ nome }}
+                </option>
                 {% endfor %}
             </select>
 
             <label>Função:</label>
             <select name="funcao">
                 {% for nome in funcoes %}
-                <option value="{{ nome }}">{{ nome }}</option>
+                <option value="{{ nome }}" {% if nome == tarefa['funcao'] %}selected{% endif %}>
+                    {{ nome }}
+                </option>
                 {% endfor %}
             </select>
 
             <label>Título da Tarefa:</label>
-            <input name="local" type="text" value="{{ tarefa[3] }}" placeholder="Ex: Criar nova Tarefa" required>
+            <input name="local" type="text" value="{{ tarefa['local'] }}" placeholder="Ex: Manutenção Geral" required>
 
             <label>Descrição:</label>
-            <textarea name="tarefa" rows="6" placeholder="Descreva os detalhes..." required>{{ tarefa[4] }}</textarea>
+            <textarea name="tarefa" rows="6" placeholder="Descreva os detalhes..." required>{{ tarefa['tarefa'] }}</textarea>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div>
                     <label>Prioridade:</label>
                     <select name="prioridade">
-                        <option value="baixa" selected>Baixa</option>
-                        <option value="media">Média</option>
-                        <option value="alta">Alta</option>
+                        <option value="baixa" {% if tarefa['prioridade'] == 'baixa' %}selected{% endif %}>Baixa</option>
+                        <option value="media" {% if tarefa['prioridade'] == 'media' %}selected{% endif %}>Média</option>
+                        <option value="alta" {% if tarefa['prioridade'] == 'alta' %}selected{% endif %}>Alta</option>
                     </select>
                 </div>
                 <div>
                     <label>Registrado por (Gestor):</label>
                     <select name="gestor" required>
                         {% for nome in gestores %}
-                        <option value="{{ nome }}">{{ nome }}</option>
+                        <option value="{{ nome }}" {% if nome == tarefa['responsavel_registro'] %}selected{% endif %}>
+                            {{ nome }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
+
             <div class="cnt_bt">
                 <a href="{{ url_for('status') }}" class="bt_cancelar">CANCELAR</a>
                 <button type="submit" class="bt_primario">SALVAR ALTERAÇÕES</button>

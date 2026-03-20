@@ -41,6 +41,25 @@ def criar_banco():
         )
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS comentarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tarefa_id INTEGER,
+            texto TEXT NOT NULL,
+            data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (tarefa_id) REFERENCES tarefas (id) ON DELETE CASCADE
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS anexos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tarefa_id INTEGER,
+            nome_arquivo TEXT NOT NULL,
+            data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (tarefa_id) REFERENCES tarefas (id) ON DELETE CASCADE
+        )
+    ''')
 
     cursor.execute("SELECT COUNT(*) FROM funcionarios")
     if cursor.fetchone()[0] == 0:

@@ -24,30 +24,34 @@ function allowDrop(ev) { ev.preventDefault(); ev.currentTarget.classList.add('ov
         }
 
         function toggleFiltro() {
-            document.getElementById('painel_filtros').classList.toggle('painel_filtros_visivel');
+            const painel = document.getElementById('painel_filtros');
+            painel.classList.toggle('painel_filtros_visivel');
+            painel.classList.toggle('painel_filtros_oculto');
         }
 
         function filtrarCards() {
-            const termoBusca = document.getElementById('input_busca').value.toLowerCase();
-            const prioFiltro = document.getElementById('filtro_prioridade').value.toLowerCase();
-            const funcFiltro = document.getElementById('filtro_funcionario').value.toLowerCase();
-            const gestFiltro = document.getElementById('filtro_gestor').value.toLowerCase();
-            const funcaoFiltro = document.getElementById('filtro_funcao').value.toLowerCase();
-            
+            const buscaTexto = document.getElementById('input_busca').value.toLowerCase();
+            const filtroFuncionario = document.getElementById('filtro_funcionario').value.toLowerCase();
+            const filtroGestor = document.getElementById('filtro_gestor').value.toLowerCase();
+            const filtroFuncao = document.getElementById('filtro_funcao').value.toLowerCase();
+            const filtroPrioridade = document.getElementById('filtro_prioridade').value.toLowerCase();
+
             const cards = document.querySelectorAll('.cartao_chamado');
 
             cards.forEach(card => {
-                const descricao = card.querySelector('.titulo_tarefa').innerText.toLowerCase();
-                const nomeFunc = card.querySelector('.nome_func').innerText.toLowerCase();
-                const nomeGest = card.querySelector('.info_detalhes').innerText.toLowerCase(); 
-                
-                const bateBusca = descricao.includes(termoBusca);
-                const batePrio = prioFiltro === "" || card.querySelector('.prioridade_nivel').classList.contains(prioFiltro);
-                const bateFunc = funcFiltro === "" || nomeFunc.includes(funcFiltro);
-                const bateGest = gestFiltro === "" || nomeGest.includes(gestFiltro);
-                const bateFuncao = funcaoFiltro === "" || card.querySelector('.info_detalhes').classList.contains(funcaoFiltro);
+                const titulo = card.querySelector('.titulo_tarefa').innerText.toLowerCase();
+                const funcionario = card.querySelector('.nome_func').innerText.toLowerCase();
+                const funcao = card.querySelector('.card-funcao').innerText.toLowerCase();
+                const gestor = card.querySelector('.card-gestor').innerText.toLowerCase();
+                const prioridade = card.querySelector('.prioridade_nivel').classList.contains(filtroPrioridade) || filtroPrioridade === "";
 
-                if (bateBusca && batePrio && bateFunc && bateGest && bateFuncao) {
+                const bateBusca = titulo.includes(buscaTexto) || funcionario.includes(buscaTexto);
+                const bateFuncionario = filtroFuncionario === "" || funcionario.includes(filtroFuncionario);
+                const bateGestor = filtroGestor === "" || gestor.includes(filtroGestor);
+                const bateFuncao = filtroFuncao === "" || funcao.includes(filtroFuncao);
+                const batePrioridade = filtroPrioridade === "" || card.querySelector('.prioridade_nivel').classList.contains(filtroPrioridade);
+
+                if (bateBusca && bateFuncionario && bateGestor && bateFuncao && batePrioridade) {
                     card.style.display = "block";
                 } else {
                     card.style.display = "none";

@@ -80,3 +80,68 @@ def listar_gestores():
     nomes = [linha[0] for linha in cursor.fetchall()]
     conn.close()
     return nomes
+
+def salvar_comentario(tarefa_id, texto):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO comentarios (tarefa_id, texto) VALUES (?, ?)', (tarefa_id, texto))
+    conn.commit()
+    conn.close()
+
+def buscar_comentarios(tarefa_id):
+    conn = conectar()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, texto, datetime(data_hora, 'localtime') as data 
+        FROM comentarios 
+        WHERE tarefa_id = ? 
+        ORDER BY data_hora DESC
+    ''', (tarefa_id,))
+    colunas = cursor.fetchall()
+    conn.close()
+    return colunas
+
+def salvar_anexo(tarefa_id, nome_arquivo):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO anexos (tarefa_id, nome_arquivo) VALUES (?, ?)', (tarefa_id, nome_arquivo))
+    conn.commit()
+    conn.close()
+
+def buscar_anexos(tarefa_id):
+    conn = conectar()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id, nome_arquivo, datetime(data_hora, 'localtime') as data 
+        FROM anexos WHERE tarefa_id = ? 
+        ORDER BY data_hora DESC
+    ''', (tarefa_id,))
+    res = cursor.fetchall()
+    conn.close()
+    return res
+    
+
+def excluir_comentario(id_comentario):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM comentarios WHERE id = ?', (id_comentario,))
+    conn.commit()
+    conn.close()
+
+def excluir_anexo(id_anexo):
+    conn = conectar()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT nome_arquivo FROM anexos WHERE id = ?', (id_anexo,))
+    anexo = cursor.fetchone()
+    
+    if anexo:
+        nome_arquivo = anexo['nome_arquivo']
+        cursor.execute('DELETE FROM anexos WHERE id = ?', (id_anexo,))
+        conn.commit()
+        conn.close()
+        return nome_arquivo
+    conn.close()
+    return None
