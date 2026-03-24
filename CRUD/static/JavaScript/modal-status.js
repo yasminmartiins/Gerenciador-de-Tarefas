@@ -39,11 +39,11 @@ async function carregarAnexos(id) {
 async function abrirModal(titulo, id, func, gestor, descricao, setor) {
     tarefaAtualId = id;
 
-    document.getElementById('modal_titulo').innerText = titulo;
-    document.getElementById('modal_setor').innerText = setor;
+    document.getElementById('modal_titulo').innerText = titulo; 
+    document.getElementById('modal_descricao').innerText = descricao;
     document.getElementById('modal_func').innerText = func;
     document.getElementById('modal_gestor').innerText = gestor;
-    document.getElementById('modal_descricao').innerText = descricao;
+    document.getElementById('modal_setor').innerText = setor;
 
     const listaDiv = document.getElementById('lista_comentarios');
     listaDiv.innerHTML = "Carregando...";
@@ -51,28 +51,31 @@ async function abrirModal(titulo, id, func, gestor, descricao, setor) {
     try {
         const response = await fetch(`/listar_comentarios/${id}`);
         const comentarios = await response.json();
-
         listaDiv.innerHTML = "";
         comentarios.forEach(c => {
-            const item = `
+            listaDiv.insertAdjacentHTML('beforeend', `
                 <div class="item_lista">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between;">
                         <span class="item_data">${c.data}</span>
-                        <button onclick="confirmarExclusaoComentario(${c.id})" class="btn-deletar-item" title="Excluir comentário">
-                            &times;
-                        </button>
+                        <button onclick="confirmarExclusaoComentario(${c.id})" class="btn-deletar-item">&times;</button>
                     </div>
                     <span>${c.texto}</span>
-                </div>`;
-            listaDiv.insertAdjacentHTML('beforeend', item);
+                </div>`);
         });
-    } catch (e) {
-        listaDiv.innerHTML = "Erro ao carregar comentários.";
-    }
+    } catch (e) { listaDiv.innerHTML = "Erro ao carregar comentários."; }
 
     await carregarAnexos(id);
-
     document.getElementById('modal_detalhes').style.display = "block";
+}
+
+function recarregarDadosModal() {
+    const tit = document.getElementById('modal_titulo').innerText;
+    const desc = document.getElementById('modal_descricao').innerText;
+    const set = document.getElementById('modal_setor').innerText;
+    const fun = document.getElementById('modal_func').innerText;
+    const ges = document.getElementById('modal_gestor').innerText;
+    
+    abrirModal(tit, tarefaAtualId, fun, ges, desc, set);
 }
 
 async function adicionarComentario() {
@@ -135,34 +138,34 @@ function fecharModal() {
 }
 
 function recarregarDadosModal() {
-    const tit = document.getElementById('modal_titulo').innerText;
+    const tit = document.getElementById('modal_descricao').innerText;
+    const desc = document.getElementById('modal_titulo').innerText;
     const set = document.getElementById('modal_setor').innerText;
     const fun = document.getElementById('modal_func').innerText;
     const ges = document.getElementById('modal_gestor').innerText;
-    const desc = document.getElementById('modal_descricao').innerText;
-    
+
     abrirModal(tit, tarefaAtualId, fun, ges, desc, set);
 }
 
 function visualizarAnexo(nomeArquivo) {
+    console.log("Tentando visualizar:", nomeArquivo);
     const extensao = nomeArquivo.split('.').pop().toLowerCase();
     const url = `/static/uploads/${nomeArquivo}`;
     const container = document.getElementById('container_preview');
+    
+    const labelNome = document.getElementById('nome_arquivo_preview');
     const linkDownload = document.getElementById('link_download_direto');
     
-    container.innerHTML = "";
-    linkDownload.href = url;
+    container.innerHTML = ""; 
+    if (labelNome) labelNome.innerText = nomeArquivo;
+    if (linkDownload) linkDownload.href = url;
 
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extensao)) {
-        container.innerHTML = `<img src="${url}" alt="Preview">`;
+        container.innerHTML = `<img src="${url}" style="max-width:100%; max-height:70vh;">`;
     } else if (extensao === 'pdf') {
-        container.innerHTML = `<iframe src="${url}"></iframe>`;
+        container.innerHTML = `<embed src="${url}" type="application/pdf" width="100%" height="500px">`;
     } else {
-        container.innerHTML = `
-            <div style="padding: 40px; text-align: center; color: #888;">
-                <i class="fas fa-file-alt fa-4x" style="margin-bottom: 20px;"></i>
-                <p>Visualização não disponível para este tipo de arquivo.<br>Use o botão abaixo para baixar.</p>
-            </div>`;
+        container.innerHTML = `<p style="color:white">Pré-visualização não disponível para este tipo de arquivo.</p>`;
     }
 
     document.getElementById('modal_preview').style.display = "block";

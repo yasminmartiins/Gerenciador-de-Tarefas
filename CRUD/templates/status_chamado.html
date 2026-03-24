@@ -22,28 +22,32 @@
     {% macro desenhar_cartao(tarefa) %}
 
     <div class="cartao_chamado" 
-     id="card-{{ tarefa[0] }}" onclick="abrirModal(`{{ tarefa[4]|replace('`', '\\`') }}`, `{{ tarefa[0] }}`, `{{ tarefa[1] }}`, `{{ tarefa[9] }}`, `{{ tarefa[3]|replace('`', '\\`') }}`, `{{ tarefa[2] }}`)"
+     id="card-{{ tarefa['id'] }}" onclick="abrirModal(`{{ tarefa['titulo'] }}`, `{{ tarefa['id'] }}`, `{{ tarefa['funcionario'] }}`, `{{ tarefa['gestor'] }}`, `{{ tarefa['descricao'] }}`, `{{ tarefa['funcao'] }}`)"
      draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)">
         <div class="cabecalho_cartao">
-            <div class="prioridade_nivel {{ tarefa[5] | lower }}">
+            <div class="prioridade_nivel {{ tarefa['prioridade'] | lower }}">
                 <span style="margin-right: 10px;">PRIORIDADE</span>
                 <div class="barra"></div><div class="barra"></div><div class="barra"></div>
             </div>
-            <span class="id_chamado">#{{ tarefa[0] }}</span>
+            <span class="id_chamado">#{{ tarefa['id'] }}</span>
         </div>
         <div class="corpo_cartao">
-            <h3 class="titulo_tarefa">{{ tarefa[3] }}</h3>
+            <h3 class="titulo_tarefa">{{ tarefa['titulo'] }}</h3>
             <div class="info_principal">
-                <span class="nome_func"><i class="fas fa-user"></i> {{ tarefa[1] }}</span>
+                <span class="nome_func"><i class="fas fa-user"></i> {{ tarefa['funcionario'] }}</span>
             </div>
             <div class="info_detalhes">
-                <p style="margin-bottom: 10px;"><strong>Função:</strong> <span class="card-funcao">{{ tarefa[2] }}</span></p>
-                <p><strong>Gestor:</strong> <span class="card-gestor">{{ tarefa[9] }}</span></p>
+                <p style="margin-bottom: 10px;"><strong>Função:</strong> <span class="card-funcao">{{ tarefa['funcao'] }}</span></p>
+                <p style="margin-bottom: 10px;"><strong>Gestor:</strong> <span class="card-gestor">{{ tarefa['gestor'] }}</span></p>
+                <p style="margin-bottom: 10px;"><strong>Criado em:</strong> {{ tarefa['data_criacao'] }}</p>
+                {% if tarefa['status'] == 'concluido' %}
+                <p><strong>Finalizado em:</strong> {{ tarefa['data_conclusao'] }}</p>
+                {% endif %}
             </div>
         </div>
         <div class="cnt_bt_cartao">
-            <a href="{{ url_for('editar', id=tarefa[0]) }}" class="bt_editar" onclick="event.stopPropagation();"><i class="fas fa-edit"></i> EDITAR</a>
-            <a href="{{ url_for('excluir', id=tarefa[0]) }}" class="bt_excluir" onclick="event.stopPropagation(); return confirm('Tem certeza que deseja excluir essa tarefa?')"><i class="fas fa-trash-alt"></i> EXCLUIR</a>
+            <a href="{{ url_for('editar', id=tarefa['id']) }}" class="bt_editar" onclick="event.stopPropagation();"><i class="fas fa-edit"></i> EDITAR</a>
+            <a href="{{ url_for('excluir', id=tarefa['id']) }}" class="bt_excluir" onclick="event.stopPropagation(); return confirm('Tem certeza que deseja excluir essa tarefa?')"><i class="fas fa-trash-alt"></i> EXCLUIR</a>
         </div>
     </div>
     {% endmacro %}
@@ -53,21 +57,21 @@
             <div class="coluna_kanban" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" id="pendente">
                 <h2 class="titulo_coluna">Pendente</h2>
                 <div class="lista_chamados">
-                    {% for tarefa in tarefas if tarefa[6] == 'pendente' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
+                    {% for tarefa in tarefas if tarefa['status'] == 'pendente' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
                 </div>
             </div>
 
             <div class="coluna_kanban" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" id="andamento">
                 <h2 class="titulo_coluna">Em Andamento</h2>
                 <div class="lista_chamados">
-                    {% for tarefa in tarefas if tarefa[6] == 'andamento' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
+                    {% for tarefa in tarefas if tarefa['status'] == 'andamento' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
                 </div>
             </div>
 
             <div class="coluna_kanban" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" id="concluido">
                 <h2 class="titulo_coluna">Concluído</h2>
                 <div class="lista_chamados">
-                    {% for tarefa in tarefas if tarefa[6] == 'concluido' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
+                    {% for tarefa in tarefas if tarefa['status'] == 'concluido' %}{{ desenhar_cartao(tarefa) }}{% endfor %}
                 </div>
             </div>
         </div>

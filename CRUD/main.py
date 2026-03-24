@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+import database
 import models
 import os
 from werkzeug.utils import secure_filename
@@ -17,6 +18,9 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+with app.app_context():
+    database.criar_banco()
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -26,94 +30,86 @@ def criar():
     if request.method == 'POST':
         funcionario = request.form.get('funcionario')
         funcao = request.form.get('funcao')
-        local = request.form.get('local')
-        tarefa = request.form.get('tarefa')
+        titulo = request.form.get('titulo')
+        descricao = request.form.get('descricao')
         prioridade = request.form.get('prioridade').lower() 
         gestor = request.form.get('gestor')
         
-        models.inserir_tarefa(funcionario, funcao, local, tarefa, prioridade, gestor)
+        models.inserir_tarefa(funcionario, funcao, titulo, descricao, prioridade, gestor)
         return redirect(url_for('status'))
-    
-    lista_funcs = models.listar_funcionarios()
-    lista_gestores = models.listar_gestores()
-    lista_funcoes = models.listar_funcoes()
-    
+
     return render_template('criar_chamado.html', 
-                           funcionarios=lista_funcs, 
-                           gestores=lista_gestores,
-                           funcoes=lista_funcoes)
+                         funcionarios=models.listar_funcionarios(),
+                         gestores=models.listar_gestores(),
+                         funcoes=models.listar_funcoes())
 
 @app.route('/status')
 def status():
-    todas = models.listar_todas_tarefas()
-    lista_funcs = models.listar_funcionarios()
-    lista_gestores = models.listar_gestores()
-    lista_funcoes = models.listar_funcoes()
-    
+    tarefas = models.listar_todas_tarefas()
     return render_template('status_chamado.html', 
-                           tarefas=todas, 
-                           funcionarios=lista_funcs, 
-                           gestores=lista_gestores,
-                           funcoes=lista_funcoes)
+                         tarefas=tarefas,
+                         funcionarios=models.listar_funcionarios(),
+                         gestores=models.listar_gestores(),
+                         funcoes=models.listar_funcoes())
 
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
     if request.method == 'POST':
-        funcionario = request.form.get('funcionario')
-        funcao = request.form.get('funcao')
-        local = request.form.get('local')  
-        tarefa = request.form.get('tarefa')
-        prioridade = request.form.get('prioridade').lower()
-        gestor = request.form.get('gestor')
-        
-        models.atualizar_tarefa_completa(id, funcionario, funcao, local, tarefa, prioridade, gestor)
+        models.atualizar_tarefa_completa(
+            id,
+            request.form.get('funcionario'),
+            request.form.get('funcao'),
+            request.form.get('titulo'),
+            request.form.get('descricao'),
+            request.form.get('prioridade').lower(),
+            request.form.get('gestor')
+        )
         return redirect(url_for('status'))
-
-    tarefa_existente = models.buscar_tarefa_por_id(id)
-    lista_funcs = models.listar_funcionarios()
-    lista_gestores = models.listar_gestores()
-    lista_funcoes = models.listar_funcoes()
     
+    tarefa = models.buscar_tarefa_por_id(id)
     return render_template('editar_chamado.html', 
-                           tarefa=tarefa_existente, 
-                           funcionarios=lista_funcs, 
-                           gestores=lista_gestores,
-                           funcoes=lista_funcoes)
+                         tarefa=tarefa,
+                         funcionarios=models.listar_funcionarios(),
+                         gestores=models.listar_gestores(),
+                         funcoes=models.listar_funcoes())
 
 @app.route('/atualizar_status', methods=['POST'])
 def atualizar_status():
-    data = request.get_json()
-    models.atualizar_status_tarefa(data['id'], data['status'])
-    return jsonify({"success": True})
+    dados = request.get_json()
+    if dados:
+        models.atualizar_status(dados['id'], dados['status'])
+        return jsonify({"success": True})
+    return jsonify({"success": False}), 400
 
 @app.route('/excluir/<int:id>')
 def excluir(id):
-    models.excluir_tarefa(id)
+    anexos = models.buscar_anexos(id)
+    
+    for anexo in anexos:
+        caminho = os.path.join(app.config['UPLOAD_FOLDER'], anexo['nome_arquivo'])
+        if os.path.exists(caminho):
+            os.remove(caminho)
+    
+    models.excluir_tarefa(id) 
+    
     return redirect(url_for('status'))
 
-
-@app.route('/listar_comentarios/<int:id_tarefa>')
-def listar_comentarios_rota(id_tarefa):
-    comentarios = models.buscar_comentarios(id_tarefa)
-    lista_json = []
-    for c in comentarios:
-        lista_json.append({
-            "id": c['id'],     
-            "texto": c['texto'],
-            "data": c['data']
-        })
-    return jsonify(lista_json)
-
 @app.route('/comentar', methods=['POST'])
-def comentar_rota():
+def adicionar_comentario():
     dados = request.get_json()
     id_tarefa = dados.get('tarefa_id')
     texto = dados.get('texto')
     
     if id_tarefa and texto:
-        models.salvar_comentario(id_tarefa, texto)
+        models.inserir_comentario(id_tarefa, texto)
         return jsonify({"status": "sucesso"}), 200
-    return jsonify({"status": "erro"}), 400
+    return jsonify({"erro": "Dados inválidos"}), 400
+
+@app.route('/listar_comentarios/<int:id_tarefa>')
+def listar_comentarios(id_tarefa):
+    comentarios = models.buscar_comentarios(id_tarefa)
+    lista = [{"id": c['id'], "texto": c['texto'], "data": c['data']} for c in comentarios]
+    return jsonify(lista)
 
 @app.route('/deletar_comentario/<int:id>', methods=['DELETE'])
 def deletar_comentario(id):
@@ -127,14 +123,14 @@ def upload_anexo(id_tarefa):
     
     arquivo = request.files['file']
     if arquivo.filename == '' or not allowed_file(arquivo.filename):
-        return jsonify({"erro": "Nome do arquivo vazio"}), 400
+        return jsonify({"erro": "Arquivo inválido ou não permitido"}), 400
 
-    nome_seguro = secure_filename(arquivo.filename)
-    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_seguro)
+    nome = secure_filename(arquivo.filename)
+    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome)
     arquivo.save(caminho)
 
-    models.salvar_anexo(id_tarefa, nome_seguro)
-    return jsonify({"status": "sucesso", "arquivo": nome_seguro})
+    models.salvar_anexo(id_tarefa, nome)
+    return jsonify({"status": "sucesso", "arquivo": nome})
 
 @app.route('/listar_anexos/<int:id_tarefa>')
 def listar_anexos(id_tarefa):
@@ -145,11 +141,14 @@ def listar_anexos(id_tarefa):
 @app.route('/deletar_anexo/<int:id>', methods=['DELETE'])
 def deletar_anexo(id):
     nome_arquivo = models.excluir_anexo(id)
+    
     if nome_arquivo:
-        caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-        if os.path.exists(caminho):
-            os.remove(caminho)
+        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+        
+        if os.path.exists(caminho_arquivo):
+            os.remove(caminho_arquivo)
+            
     return jsonify({"success": True})
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)

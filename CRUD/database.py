@@ -1,8 +1,13 @@
 import sqlite3
 
+def conectar():
+    conn = sqlite3.connect('app.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
 def criar_banco():
-    conexao = sqlite3.connect('app.db')
-    cursor = conexao.cursor()
+    conn = conectar()
+    cursor = conn.cursor()
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS funcionarios (
@@ -28,16 +33,15 @@ def criar_banco():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tarefas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            funcionario TEXT NOT NULL,
+            funcionario TEXT,
             funcao TEXT,
-            local TEXT,
-            tarefa TEXT NOT NULL,
+            titulo TEXT,
+            descricao TEXT,
             prioridade TEXT,
-            status TEXT DEFAULT 'pendente',
-            inicio TEXT,
-            termino TEXT,
-            responsavel_registro TEXT,
-            data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+            status TEXT,
+            gestor TEXT,
+            data_criacao DATETIME,
+            data_conclusao DATETIME
         )
     ''')
 
@@ -76,8 +80,8 @@ def criar_banco():
         cursor.executemany("INSERT INTO funcoes (nome) VALUES (?)", 
                           [('Desenvolvedor',), ('Product Owner',), ('Tech Lead',), ('Scrum Master',)])
 
-    conexao.commit()
-    conexao.close()
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     criar_banco()

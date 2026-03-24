@@ -33,10 +33,10 @@
             </select>
 
             <label>Título da Tarefa:</label>
-            <input name="local" type="text" value="{{ tarefa['local'] }}" placeholder="Ex: Manutenção Geral" required>
+            <input name="titulo" type="text" value="{{ tarefa['titulo'] }}" placeholder="Ex: Manutenção Geral" required>
 
             <label>Descrição:</label>
-            <textarea name="tarefa" rows="6" placeholder="Descreva os detalhes..." required>{{ tarefa['tarefa'] }}</textarea>
+            <textarea name="descricao" rows="6" placeholder="Descreva os detalhes..." required>{{ tarefa['descricao'] }}</textarea>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div>
@@ -51,7 +51,7 @@
                     <label>Registrado por (Gestor):</label>
                     <select name="gestor" required>
                         {% for nome in gestores %}
-                        <option value="{{ nome }}" {% if nome == tarefa['responsavel_registro'] %}selected{% endif %}>
+                        <option value="{{ nome }}" {% if nome == tarefa['gestor'] %}selected{% endif %}>
                             {{ nome }}
                         </option>
                         {% endfor %}

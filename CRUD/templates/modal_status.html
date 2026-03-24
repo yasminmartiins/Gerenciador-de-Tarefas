@@ -12,7 +12,7 @@
             <span class="fechar_modal" onclick="fecharModal()">&times;</span>
             
             <div class="header_modal">
-                <h2 id="modal_descricao">Título da Tarefa</h2>
+                <h2 id="modal_titulo">Título da Tarefa</h2>
             </div>
 
             <div class="modal_layout_duas_colunas">
@@ -20,7 +20,7 @@
                 <div class="coluna_esquerda">
                     <div class="secao_modal">
                         <label><i class="fas fa-align-left"></i> Descrição</label>
-                        <div id="modal_titulo" class="texto_descricao" style="margin-top: 15px;"></div>
+                        <div id="modal_descricao" class="texto_descricao" style="margin-top: 15px;"></div>
                     </div>
 
                     <div class="grid_detalhes">
@@ -72,11 +72,17 @@
     </div>
 
     <div id="modal_preview" class="modal_kanban" onclick="fecharPreview()">
-        <span class="fechar_modal">&times;</span>
         <div class="conteudo_preview" onclick="event.stopPropagation()">
-            <div id="container_preview"></div>
+            <span class="fechar_modal" onclick="fecharPreview()" style="top: 10px; right: 20px;">&times;</span>
+            
+            <div id="container_preview">
+                </div>
+
             <div class="footer_preview">
-                <a id="link_download_direto" href="#" download class="bt_comentar">Baixar Original</a>
+                <span id="nome_arquivo_preview" style="color: #888; font-size: 0.9rem;"></span>
+                <a id="link_download_direto" href="#" download class="bt_comentar">
+                    <i class="fas fa-download"></i> Baixar Original
+                </a>
             </div>
         </div>
     </div>
