@@ -63,3 +63,12 @@ h2 {
     padding: 30px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
+
+.icon {
+    margin-left: auto;
+}
+
+.icon i {
+    color: white;
+    font-size: 1.5rem;
+}

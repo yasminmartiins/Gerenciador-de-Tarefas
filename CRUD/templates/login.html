@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="cnt_principal">
+        <form action="index.html" method="post" class="forms">
+            <h2>Faça o seu Login</h2>
+
+            <label for="usuário">Usuário:</label>
+            <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário">
+            
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" placeholder="Digite sua senha">
+
+            <div class="botao">
+                <button type="submit">Entrar</button>
+            </div>
+            
+            <p>Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a></p>
+            <p><a href="#">Esqueceu a senha?</a></p>
+        </form>
+    </div>
+</body>
+</html>
