@@ -9,17 +9,17 @@
 </head>
 <body>
     <div class="cnt_principal">
-        <form action="index.html" method="post" class="forms">
+        <form id="loginForms" action="index.html" method="post" class="forms">
             <h2>Faça o seu Login</h2>
 
             <label for="usuário">Usuário:</label>
             <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário">
             
             <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" placeholder="Digite sua senha">
+            <input type="passwsaord" id="senha" name="senha" placeholder="Digite sua senha">
 
             <div class="botao">
-                <button type="submit">Entrar</button>
+                <button type="submit" onclick="efetuarLogin()">Entrar</button>
             </div>
             
             <p>Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a></p>

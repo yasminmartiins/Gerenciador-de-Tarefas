@@ -17,6 +17,20 @@ def criar_banco():
     ''')
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            rg TEXT,
+            cpf TEXT UNIQUE NOT NULL,
+            telefone TEXT,
+            email TEXT UNIQUE NOT NULL,
+            senha TEXT NOT NULL,
+            status TEXT,
+            cargo TEXT
+        )
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS gestores (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL
@@ -31,17 +45,8 @@ def criar_banco():
     ''')
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS salas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            status TEXT DEFAULT 'Disponível' -- 'Disponível' ou 'Indisponível'
-        )
-    ''')
-
-    cursor.execute('''
         CREATE TABLE IF NOT EXISTS tarefas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            sala_id INTEGER,
             funcionario TEXT,
             funcao TEXT,
             titulo TEXT,
@@ -50,8 +55,7 @@ def criar_banco():
             status TEXT,
             gestor TEXT,
             data_criacao DATETIME,
-            data_conclusao DATETIME,
-            FOREIGN KEY (sala_id) REFERENCES salas (id)
+            data_conclusao DATETIME
         )
     ''')
 
@@ -89,11 +93,6 @@ def criar_banco():
     if cursor.fetchone()[0] == 0:
         cursor.executemany("INSERT INTO funcoes (nome) VALUES (?)", 
                           [('Desenvolvedor',), ('Product Owner',), ('Tech Lead',), ('Scrum Master',)])
-        
-    cursor.execute("SELECT COUNT(*) FROM salas")
-    if cursor.fetchone()[0] == 0:
-        cursor.executemany("INSERT INTO salas (nome) VALUES (?)", 
-                        [('Sala de Reunião 01',), ('Auditório Principal',), ('Sala de Inovação',)])
 
     conn.commit()
     conn.close()

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import database
 import models
 import os
@@ -27,41 +27,30 @@ def index():
 
 @app.route('/criar', methods=['GET', 'POST'])
 def criar():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
-        sala_id = request.form.get('sala_id')
         funcionario = request.form.get('funcionario')
         funcao = request.form.get('funcao')
         titulo = request.form.get('titulo')
         descricao = request.form.get('descricao')
         prioridade = request.form.get('prioridade').lower() 
         gestor = request.form.get('gestor')
-
-        if sala_id and sala_id != "":
-            conn = models.conectar()
-            cursor = conn.cursor()
-            cursor.execute("SELECT status FROM salas WHERE id = ?", (sala_id,))
-            sala = cursor.fetchone()
-            conn.close()
-            
-            if sala and sala['status'] == 'Indisponível':
-                flash("Esta sala está reservada!")
-                return redirect(url_for('criar'))
-            
-            models.reservar_sala(sala_id)
-        else:
-            sala_id = None
         
-        models.inserir_tarefa(sala_id,funcionario, funcao, titulo, descricao, prioridade, gestor)
+        models.inserir_tarefa(funcionario, funcao, titulo, descricao, prioridade, gestor)
         return redirect(url_for('status'))
 
     return render_template('criar_chamado.html', 
                          funcionarios=models.listar_funcionarios(),
                          gestores=models.listar_gestores(),
-                         funcoes=models.listar_funcoes(),
-                         salas=models.listar_salas())
+                         funcoes=models.listar_funcoes())
 
 @app.route('/status')
 def status():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+        
     tarefas = models.listar_todas_tarefas()
     return render_template('status_chamado.html', 
                          tarefas=tarefas,
@@ -79,8 +68,7 @@ def editar(id):
             request.form.get('titulo'),
             request.form.get('descricao'),
             request.form.get('prioridade').lower(),
-            request.form.get('gestor'),
-            request.form.get('sala_id')
+            request.form.get('gestor')
         )
         return redirect(url_for('status'))
     
@@ -89,8 +77,7 @@ def editar(id):
                          tarefa=tarefa,
                          funcionarios=models.listar_funcionarios(),
                          gestores=models.listar_gestores(),
-                         funcoes=models.listar_funcoes(),
-                         salas=models.listar_salas())
+                         funcoes=models.listar_funcoes())
 
 @app.route('/atualizar_status', methods=['POST'])
 def atualizar_status():
@@ -169,13 +156,59 @@ def deletar_anexo(id):
             
     return jsonify({"success": True})
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
-@app.route('/cadastro')
+@app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
+    if request.method == 'POST':
+        dados = request.get_json()
+        if not dados.get('email') or not dados.get('senha'):
+            return jsonify({"error": "Dados incompletos"}), 400
+
+        try:
+            conn = conectar()
+            cursor = conn.cursor()
+        
+            cursor.execute('''
+                INSERT INTO usuarios (nome, rg, cpf, telefone, email, senha, status, cargo)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                dados['nome'], dados['rg'], dados['cpf'], 
+                dados['tel'], dados['email'], dados['senha'], 
+                dados['status'], dados['cargo']
+            ))
+        
+            conn.commit()
+            conn.close()
+            return jsonify({"message": "Usuário cadastrado com sucesso!"}), 201
+    
+        except sqlite3.IntegrityError:
+            return jsonify({"error": "CPF ou E-mail já cadastrados!"}), 400
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
     return render_template('cadastrar.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        dados = request.get_json()
+        email = dados.get('email')
+        senha = dados.get('senha')
+
+        conn = database.conectar()
+        cursor = conn.cursor()
+        usuario = cursor.execute(
+            'SELECT * FROM usuarios WHERE email = ? AND senha = ?', 
+            (email, senha)
+        ).fetchone()
+        conn.close()
+
+        if usuario and usuario['senha'] == senha: 
+            session['usuario_id'] = usuario['id']
+            return jsonify({"success": True}), 200
+
+        return jsonify({"success": False, "error": "E-mail ou senha incorretos."}), 401
+            
+    return render_template('login.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

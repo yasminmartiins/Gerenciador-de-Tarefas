@@ -6,30 +6,20 @@ def conectar():
     conn.row_factory = sqlite3.Row
     return conn
 
-def inserir_tarefa(sala_id, funcionario, funcao, titulo, descricao, prioridade, gestor):
+def inserir_tarefa(funcionario, funcao, titulo, descricao, prioridade, gestor):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO tarefas (sala_id, funcionario, funcao, titulo, descricao, prioridade, status, gestor, data_criacao)
-        VALUES (?, ?, ?, ?, ?, ?, 'pendente', ?, datetime('now', 'localtime'))
-    ''', (sala_id, funcionario, funcao, titulo, descricao, prioridade, gestor))
+        INSERT INTO tarefas (funcionario, funcao, titulo, descricao, prioridade, status, gestor, data_criacao)
+        VALUES (?, ?, ?, ?, ?, 'pendente', ?, datetime('now', 'localtime'))
+    ''', (funcionario, funcao, titulo, descricao, prioridade, gestor))
     conn.commit()
     conn.close()
 
 def listar_todas_tarefas():
     conn = conectar()
     cursor = conn.cursor()
-    sql = '''
-        SELECT tarefas.id, tarefas.funcionario, tarefas.funcao, tarefas.titulo, 
-               tarefas.descricao, tarefas.prioridade, tarefas.status, tarefas.gestor,
-               tarefas.sala_id,
-               salas.nome as nome_sala, 
-               datetime(tarefas.data_criacao) as data_criacao,
-               datetime(tarefas.data_conclusao) as data_conclusao
-        FROM tarefas 
-        LEFT JOIN salas ON tarefas.sala_id = salas.id
-    '''
-    cursor.execute(sql)
+    cursor.execute("SELECT *, datetime(data_criacao) as data_criacao FROM tarefas")
     dados = cursor.fetchall()
     conn.close()
     return dados
@@ -42,63 +32,35 @@ def buscar_tarefa_por_id(id_tarefa):
     conn.close()
     return dado
 
-def atualizar_tarefa_completa(id_tarefa, funcionario, funcao, titulo, descricao, prioridade, gestor, nova_sala_id):
+def atualizar_tarefa_completa(id_tarefa, funcionario, funcao, titulo, descricao, prioridade, gestor):
     conn = conectar()
     cursor = conn.cursor()
-    
-    cursor.execute("SELECT sala_id FROM tarefas WHERE id = ?", (id_tarefa,))
-    antiga_sala = cursor.fetchone()
-    antiga_sala_id = antiga_sala['sala_id'] if antiga_sala else None
-
-    if antiga_sala_id != nova_sala_id:
-        if antiga_sala_id:
-            cursor.execute("UPDATE salas SET status = 'Disponível' WHERE id = ?", (antiga_sala_id,))
-        if nova_sala_id and nova_sala_id != "":
-            cursor.execute("UPDATE salas SET status = 'Indisponível' WHERE id = ?", (nova_sala_id,))
-
     cursor.execute('''
         UPDATE tarefas 
-        SET funcionario = ?, funcao = ?, titulo = ?, descricao = ?, prioridade = ?, gestor = ?, sala_id = ?
+        SET funcionario = ?, funcao = ?, titulo = ?, descricao = ?, prioridade = ?, gestor = ?
         WHERE id = ?
-    ''', (funcionario, funcao, titulo, descricao, prioridade, gestor, nova_sala_id if nova_sala_id != "" else None, id_tarefa))
-    
+    ''', (funcionario, funcao, titulo, descricao, prioridade, gestor, id_tarefa))
     conn.commit()
     conn.close()
 
 def atualizar_status(id_tarefa, novo_status):
     conn = conectar()
     cursor = conn.cursor()
-    
     if novo_status == 'concluido':
-        cursor.execute("SELECT sala_id FROM tarefas WHERE id = ?", (id_tarefa,))
-        tarefa = cursor.fetchone()
-        if tarefa and tarefa['sala_id']:
-            cursor.execute("UPDATE salas SET status = 'Disponível' WHERE id = ?", (tarefa['sala_id'],))
-
         cursor.execute('''
             UPDATE tarefas 
             SET status = ?, data_conclusao = datetime('now', 'localtime') 
-                       
             WHERE id = ?
         ''', (novo_status, id_tarefa))
     else:
         cursor.execute('UPDATE tarefas SET status = ?, data_conclusao = NULL WHERE id = ?', (novo_status, id_tarefa))
-    
     conn.commit()
     conn.close()
 
 def excluir_tarefa(id_tarefa):
     conn = conectar()
     cursor = conn.cursor()
-    
-    cursor.execute("SELECT sala_id FROM tarefas WHERE id = ?", (id_tarefa,))
-    tarefa = cursor.fetchone()
-    
-    if tarefa and tarefa['sala_id']:
-        cursor.execute("UPDATE salas SET status = 'Disponível' WHERE id = ?", (tarefa['sala_id'],))
-    
     cursor.execute('DELETE FROM tarefas WHERE id = ?', (id_tarefa,))
-    
     conn.commit()
     conn.close()
 
@@ -185,30 +147,8 @@ def excluir_anexo(id_anexo):
         cursor.execute('DELETE FROM anexos WHERE id = ?', (id_anexo,))
         conn.commit()
         conn.close()
-        return nome_arquivo
-
-def listar_salas():
-    conn = conectar()
-    cursor = conn.cursor()
-    # Buscamos o ID, Nome e o Status para sinalizar no front
-    cursor.execute("SELECT id, nome, status FROM salas")
-    salas = cursor.fetchall()
-    conn.close()
-    return salas
-
-def reservar_sala(sala_id):
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE salas SET status = 'Indisponível' WHERE id = ?", (sala_id,))
-    conn.commit()
-    conn.close()
-
-def liberar_sala(sala_id):
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE salas SET status = 'Disponível' WHERE id = ?", (sala_id,))
-    conn.commit()
-    conn.close()
+        return nome_arquivo 
     
     conn.close()
     return None
+
