@@ -38,6 +38,25 @@
             <label>Descrição:</label>
             <textarea name="descricao" rows="6" placeholder="Descreva os detalhes..." required>{{ tarefa['descricao'] }}</textarea>
 
+            <label for="sala_id">Reservar Sala (Opcional):</label>
+            <select name="sala_id" id="sala_id">
+                <option value="">Nenhuma sala necessária</option>
+                {% for sala in salas %}
+                    <option value="{{ sala.id }}" 
+                        {% if tarefa['sala_id'] and sala.id|int == tarefa['sala_id']|int %} 
+                            selected 
+                        {% elif sala.status == 'Indisponível' %} 
+                            disabled 
+                        {% endif %}>
+                        
+                        {{ sala.nome }} 
+                        {% if sala.status == 'Indisponível' and (not tarefa['sala_id'] or sala.id|int != tarefa['sala_id']|int) %} 
+                            (OCUPADA) 
+                        {% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div>
                     <label>Prioridade:</label>

@@ -36,7 +36,7 @@ async function carregarAnexos(id) {
     }
 }
 
-async function abrirModal(titulo, id, func, gestor, descricao, setor) {
+async function abrirModal(titulo, id, func, gestor, descricao, setor, sala) {
     tarefaAtualId = id;
 
     document.getElementById('modal_titulo').innerText = titulo; 
@@ -44,6 +44,7 @@ async function abrirModal(titulo, id, func, gestor, descricao, setor) {
     document.getElementById('modal_func').innerText = func;
     document.getElementById('modal_gestor').innerText = gestor;
     document.getElementById('modal_setor').innerText = setor;
+    document.getElementById('modal_sala').innerText = sala;
 
     const listaDiv = document.getElementById('lista_comentarios');
     listaDiv.innerHTML = "Carregando...";
@@ -74,8 +75,9 @@ function recarregarDadosModal() {
     const set = document.getElementById('modal_setor').innerText;
     const fun = document.getElementById('modal_func').innerText;
     const ges = document.getElementById('modal_gestor').innerText;
-    
-    abrirModal(tit, tarefaAtualId, fun, ges, desc, set);
+    const sal = document.getElementById('modal_sala').innerText;    
+
+    abrirModal(tit, tarefaAtualId, fun, ges, desc, set, sal);
 }
 
 async function adicionarComentario() {

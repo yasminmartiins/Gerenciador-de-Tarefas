@@ -22,7 +22,7 @@
     {% macro desenhar_cartao(tarefa) %}
 
     <div class="cartao_chamado" 
-     id="card-{{ tarefa['id'] }}" onclick="abrirModal(`{{ tarefa['titulo'] }}`, `{{ tarefa['id'] }}`, `{{ tarefa['funcionario'] }}`, `{{ tarefa['gestor'] }}`, `{{ tarefa['descricao'] }}`, `{{ tarefa['funcao'] }}`)"
+     id="card-{{ tarefa['id'] }}" onclick="abrirModal(`{{ tarefa['titulo'] }}`, `{{ tarefa['id'] }}`, `{{ tarefa['funcionario'] }}`, `{{ tarefa['gestor'] }}`, `{{ tarefa['descricao'] }}`, `{{ tarefa['funcao'] }}`, `{{ tarefa['nome_sala'] or 'Nenhuma' }}`)"
      draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)">
         <div class="cabecalho_cartao">
             <div class="prioridade_nivel {{ tarefa['prioridade'] | lower }}">

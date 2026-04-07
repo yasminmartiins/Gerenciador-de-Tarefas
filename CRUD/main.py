@@ -28,20 +28,37 @@ def index():
 @app.route('/criar', methods=['GET', 'POST'])
 def criar():
     if request.method == 'POST':
+        sala_id = request.form.get('sala_id')
         funcionario = request.form.get('funcionario')
         funcao = request.form.get('funcao')
         titulo = request.form.get('titulo')
         descricao = request.form.get('descricao')
         prioridade = request.form.get('prioridade').lower() 
         gestor = request.form.get('gestor')
+
+        if sala_id and sala_id != "":
+            conn = models.conectar()
+            cursor = conn.cursor()
+            cursor.execute("SELECT status FROM salas WHERE id = ?", (sala_id,))
+            sala = cursor.fetchone()
+            conn.close()
+            
+            if sala and sala['status'] == 'Indisponível':
+                flash("Esta sala está reservada!")
+                return redirect(url_for('criar'))
+            
+            models.reservar_sala(sala_id)
+        else:
+            sala_id = None
         
-        models.inserir_tarefa(funcionario, funcao, titulo, descricao, prioridade, gestor)
+        models.inserir_tarefa(sala_id,funcionario, funcao, titulo, descricao, prioridade, gestor)
         return redirect(url_for('status'))
 
     return render_template('criar_chamado.html', 
                          funcionarios=models.listar_funcionarios(),
                          gestores=models.listar_gestores(),
-                         funcoes=models.listar_funcoes())
+                         funcoes=models.listar_funcoes(),
+                         salas=models.listar_salas())
 
 @app.route('/status')
 def status():
@@ -62,7 +79,8 @@ def editar(id):
             request.form.get('titulo'),
             request.form.get('descricao'),
             request.form.get('prioridade').lower(),
-            request.form.get('gestor')
+            request.form.get('gestor'),
+            request.form.get('sala_id')
         )
         return redirect(url_for('status'))
     
@@ -71,7 +89,8 @@ def editar(id):
                          tarefa=tarefa,
                          funcionarios=models.listar_funcionarios(),
                          gestores=models.listar_gestores(),
-                         funcoes=models.listar_funcoes())
+                         funcoes=models.listar_funcoes(),
+                         salas=models.listar_salas())
 
 @app.route('/atualizar_status', methods=['POST'])
 def atualizar_status():
