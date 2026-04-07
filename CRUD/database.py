@@ -10,13 +10,6 @@ def criar_banco():
     cursor = conn.cursor()
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS funcionarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL
-        )
-    ''')
-
-    cursor.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
@@ -25,37 +18,42 @@ def criar_banco():
             telefone TEXT,
             email TEXT UNIQUE NOT NULL,
             senha TEXT NOT NULL,
-            status TEXT,
-            cargo TEXT
+            status TEXT DEFAULT 'Ativo',
+            cargo TEXT NOT NULL
         )
     ''')
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS gestores (
+        CREATE TABLE IF NOT EXISTS salas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL
+            nome TEXT NOT NULL,
+            status TEXT DEFAULT 'Disponível'
         )
     ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS funcoes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL           
+            nome TEXT NOT NULL 
         )
     ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tarefas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            funcionario TEXT,
+            usuario_id INTEGER, -- Dono da tarefa (quem criou)
+            sala_id INTEGER,
+            funcionario TEXT,   -- Nome de quem vai executar
             funcao TEXT,
             titulo TEXT,
             descricao TEXT,
             prioridade TEXT,
             status TEXT,
-            gestor TEXT,
+            gestor TEXT,        -- Nome do gestor responsável
             data_criacao DATETIME,
-            data_conclusao DATETIME
+            data_conclusao DATETIME,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
+            FOREIGN KEY (sala_id) REFERENCES salas (id)
         )
     ''')
 
@@ -78,24 +76,19 @@ def criar_banco():
             FOREIGN KEY (tarefa_id) REFERENCES tarefas (id) ON DELETE CASCADE
         )
     ''')
-
-    cursor.execute("SELECT COUNT(*) FROM funcionarios")
-    if cursor.fetchone()[0] == 0:
-        cursor.executemany("INSERT INTO funcionarios (nome) VALUES (?)", 
-                          [('Carlos Silva',), ('Yasmin Martins',), ('Marcos Oliveira',), ('Bruna Cabral',)])
-        
-    cursor.execute("SELECT COUNT(*) FROM gestores")
-    if cursor.fetchone()[0] == 0:
-        cursor.executemany("INSERT INTO gestores (nome) VALUES (?)", 
-                          [('Ana Souza',), ('Ricardo Santos',), ('Fernando Costa',), ('Leticia Almeida',)])
     
     cursor.execute("SELECT COUNT(*) FROM funcoes")
     if cursor.fetchone()[0] == 0:
         cursor.executemany("INSERT INTO funcoes (nome) VALUES (?)", 
                           [('Desenvolvedor',), ('Product Owner',), ('Tech Lead',), ('Scrum Master',)])
+        
+    cursor.execute("SELECT COUNT(*) FROM salas")
+    if cursor.fetchone()[0] == 0:
+        cursor.executemany("INSERT INTO salas (nome) VALUES (?)", 
+                          [('Sala de Reunião 01',), ('Auditório',), ('Laboratório',)])
 
     conn.commit()
     conn.close()
-
+    
 if __name__ == "__main__":
     criar_banco()

@@ -8,23 +8,23 @@
     <title>Login</title>
 </head>
 <body>
-    <div class="cnt_principal">
-        <form id="loginForms" action="index.html" method="post" class="forms">
-            <h2>Faça o seu Login</h2>
+    <form id="loginForms" action="index.html" method="post" class="forms">
+        <h2>Faça o seu Login</h2>
 
-            <label for="usuário">Usuário:</label>
-            <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário">
-            
-            <label for="senha">Senha:</label>
-            <input type="passwsaord" id="senha" name="senha" placeholder="Digite sua senha">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" placeholder="Digite seu e-mail">
+        
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" placeholder="Digite sua senha">
 
-            <div class="botao">
-                <button type="submit" onclick="efetuarLogin()">Entrar</button>
-            </div>
-            
-            <p>Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a></p>
-            <p><a href="#">Esqueceu a senha?</a></p>
-        </form>
-    </div>
+        <div class="botao">
+            <button type="button" onclick="efetuarLogin()">Entrar</button>
+        </div>
+
+        <script src="{{ url_for('static', filename='JavaScript/cadastro-login.js') }}"></script>
+        
+        <p>Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a></p>
+        <p><a href="#">Esqueceu a senha?</a></p>
+    </form>
 </body>
 </html>

@@ -1,22 +1,22 @@
 async function efetuarCadastro() {
-    const dados = {
-        nome: document.getElementById('nome').value,
-        rg: document.getElementById('rg').value,
-        cpf: document.getElementById('cpf').value,
-        tel: document.getElementById('tel').value,
-        email: document.getElementById('email').value,
-        senha: document.getElementById('senha').value,
-        status: document.getElementById('status').value,
-        cargo: document.getElementById('cargo').value
-    };
+    const nome = document.getElementById('nome').value;
+    const rg = document.getElementById('rg').value;
+    const cpf = document.getElementById('cpf').value;
+    const tel = document.getElementById('tel').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const status = document.getElementById('status').value;
+    const cargo = document.getElementById('cargo').value;
 
-    if (!dados.email || !dados.senha) {
-        alert("Preencha os campos obrigatórios!");
+    if (!nome || !email || !senha || !cpf) {
+        alert("Por favor, preencha todos os campos obrigatórios (Nome, CPF, E-mail e Senha).");
         return;
     }
 
+    const dados = { nome, rg, cpf, tel, email, senha, status, cargo };
+
     try {
-        const response = await fetch('/cadastrar', {
+        const response = await fetch('/cadastro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
@@ -25,23 +25,26 @@ async function efetuarCadastro() {
         const resultado = await response.json();
 
         if (response.ok) {
-            alert(resultado.message);
-            window.location.href = "/login";
+            alert("Sucesso! " + resultado.message);
+            window.location.href = "/login"; 
         } else {
-            alert("Erro: " + resultado.error);
+            alert("Erro no cadastro: " + (resultado.error || "Verifique os dados e tente novamente."));
         }
     } catch (error) {
         console.error("Erro na requisição:", error);
-        alert("Erro ao conectar com o servidor.");
+        alert("Erro crítico: Não foi possível conectar ao servidor.");
     }
 }
 
 async function efetuarLogin() {
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
+    const emailField = document.getElementById('email');
+    const senhaField = document.getElementById('senha');
+
+    const email = emailField.value.trim();
+    const senha = senhaField.value.trim();
 
     if (!email || !senha) {
-        alert("Preencha e-mail e senha!");
+        alert("Por favor, informe o e-mail e a senha.");
         return;
     }
 
@@ -55,12 +58,13 @@ async function efetuarLogin() {
         const resultado = await response.json();
 
         if (response.ok) {
-            alert("Bem-vindo!");
-            window.location.href = "/";
+            window.location.href = "/"; 
         } else {
-            alert("Erro: " + resultado.error);
+            alert("Falha no Login: " + (resultado.error || "Credenciais inválidas."));
+            senhaField.value = ""; 
         }
     } catch (error) {
-        alert("Erro ao conectar com o servidor.");
+        console.error("Erro na requisição:", error);
+        alert("Erro crítico: Não foi possível conectar ao servidor.");
     }
 }

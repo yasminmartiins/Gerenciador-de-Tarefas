@@ -26,3 +26,41 @@
     margin-bottom: 15px; 
     display: block; 
 }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cnt_header_direita {
+    display: flex;
+    align-items: center;
+    gap: 20px; 
+}
+
+.bt_logout {
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bt_logout:hover {
+    background-color: #9c9c9c;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+}
+
+.bt_logout i {
+    font-size: 1.1rem;
+}

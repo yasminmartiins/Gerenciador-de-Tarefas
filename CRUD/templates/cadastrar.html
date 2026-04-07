@@ -4,43 +4,65 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/cadastrar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="{{ url_for('static', filename='JavaScript/cadastrar-login.js') }}" defer></script>
-    <title>Login</title>
+    <title>Cadastro - Gerenciador</title>
 </head>
 <body>
-    <div class="cnt_principal fundo">
+    <form class="forms">
         <h2>Faça o seu Cadastro</h2>
-        <form action="index.html" method="post" class="forms">
-            <label for="nome">Nome sobrenome:</label>
-            <input type="text" id="nome" name="nome" placeholder="Digite seu nome e sobrenome">
+        
+        <div class="grid-container">
+            <div class="campo-grupo">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" placeholder="Digite seu nome">
+            </div>
 
-            <label for="rg">RG:</label>
-            <input type="text" id="rg" name="rg" placeholder="Digite o número do seu RG">
+            <div class="campo-grupo">
+                <label for="rg">RG:</label>
+                <input type="text" id="rg" placeholder="00.000.000-0">
+            </div>
 
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" placeholder="Digite o número do seu CPF">
+            <div class="campo-grupo">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" placeholder="000.000.000-00">
+            </div>
 
-            <label for="tel">Tel.:</label>
-            <input type="text" id="tel" name="tel" placeholder="Digite o número do seu telefone">
+            <div class="campo-grupo">
+                <label for="tel">Telefone:</label>
+                <input type="text" id="tel" placeholder="(00) 00000-0000">
+            </div>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="Digite seu email">
-            
-            <label for="senha">Senha:</label>
-            <input type="text" id="senha" name="senha" placeholder="Digite sua senha">
+            <div class="campo-grupo">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" placeholder="seu@email.com">
+            </div>
 
-            <label for="status">Status:</label>
-            <input type="text" id="status" name="status" placeholder="Digite seu status">
+            <div class="campo-grupo">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" placeholder="Crie uma senha">
+            </div>
 
-            <label for="cargo">Cargo:</label>
-            <input type="text" id="cargo" name="cargo" placeholder="Digite seu cargo">
+            <div class="campo-grupo">
+                <label>Status:</label>
+                <select id="status">
+                    <option value="Ativo">Ativo</option>
+                    <option value="Inativo">Inativo</option>
+                </select>
+            </div>
 
-            <div class="botao">
-                <button type="button" onclick="efetuarCadastro()">Entrar</button>
+            <div class="campo-grupo">
+                <label>Cargo:</label>
+                <select id="cargo">
+                    <option value="Colaborador">Colaborador</option>
+                    <option value="Gestor">Gestor</option>
+                </select>
             </div>
             
-            <p>Já possui conta? <a href="{{ url_for('login') }}">Faça Login</a></p>
-        </form>
-    </div>
+            <button type="button" class="botao-cadastrar" onclick="efetuarCadastro()">CADASTRAR USUÁRIO</button>
+            
+            <p class="links-footer">Já possui conta? <a href="{{ url_for('login') }}">Faça Login</a></p>
+        </div>
+    </form>
+
+    <script src="{{ url_for('static', filename='JavaScript/cadastro-login.js') }}"></script>
 </body>
 </html>

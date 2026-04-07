@@ -140,13 +140,14 @@ function fecharModal() {
 }
 
 function recarregarDadosModal() {
-    const tit = document.getElementById('modal_descricao').innerText;
-    const desc = document.getElementById('modal_titulo').innerText;
+    const tit = document.getElementById('modal_titulo').innerText;
+    const desc = document.getElementById('modal_descricao').innerText;
     const set = document.getElementById('modal_setor').innerText;
     const fun = document.getElementById('modal_func').innerText;
     const ges = document.getElementById('modal_gestor').innerText;
+    const sal = document.getElementById('modal_sala').innerText; 
 
-    abrirModal(tit, tarefaAtualId, fun, ges, desc, set);
+    abrirModal(tit, tarefaAtualId, fun, ges, desc, set, sal);
 }
 
 function visualizarAnexo(nomeArquivo) {
