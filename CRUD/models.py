@@ -24,7 +24,8 @@ def listar_todas_tarefas():
                tarefas.descricao, tarefas.prioridade, tarefas.status, tarefas.gestor,
                tarefas.sala_id,
                salas.nome as nome_sala, 
-               datetime(tarefas.data_criacao) as data_criacao 
+               datetime(tarefas.data_criacao) as data_criacao,
+               datetime(tarefas.data_conclusao) as data_conclusao
         FROM tarefas 
         LEFT JOIN salas ON tarefas.sala_id = salas.id
     '''
