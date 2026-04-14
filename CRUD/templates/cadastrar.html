@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/cadastrar.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Cadastro - Gerenciador</title>
 </head>
 <body>
@@ -38,7 +39,8 @@
 
             <div class="campo-grupo">
                 <label for="senha">Senha:</label>
-                <input type="password" id="senha" placeholder="Crie uma senha">
+                <input type="password" id="senha" name="senha" required 
+                    placeholder="Senh@Forte820">
             </div>
 
             <div class="campo-grupo">

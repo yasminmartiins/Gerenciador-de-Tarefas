@@ -1,17 +1,54 @@
+const Toast = Swal.mixin({
+    background: '#1e1e1e',
+    color: '#ffffff',
+    confirmButtonColor: '#4caf5c',
+    cancelButtonColor: '#e74c3c'
+});
+
 async function efetuarCadastro() {
-    const nome = document.getElementById('nome').value;
+    const elNome = document.getElementById('nome');
+    const elEmail = document.getElementById('email');
+    const elCpf = document.getElementById('cpf');
+    const elSenha = document.getElementById('senha');
+
+    const nome = elNome.value.trim();
+    const email = elEmail.value.trim();
+    const cpf = elCpf.value.trim();
+    const senha = elSenha.value;
     const rg = document.getElementById('rg').value;
-    const cpf = document.getElementById('cpf').value;
     const tel = document.getElementById('tel').value;
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
     const status = document.getElementById('status').value;
     const cargo = document.getElementById('cargo').value;
 
     if (!nome || !email || !senha || !cpf) {
-        alert("Por favor, preencha todos os campos obrigatórios (Nome, CPF, E-mail e Senha).");
-        return;
+        Toast.fire({
+            title: 'Campos Vazios!',
+            text: 'Por favor, preencha todos os campos obrigatórios (Nome, CPF, E-mail e Senha).',
+            icon: 'info'
+        });
+        return; 
     }
+
+    const regexCpf = /^\d{11}$|^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    if (!regexCpf.test(cpf)) {
+        elCpf.setCustomValidity("O CPF deve conter 11 dígitos numéricos.");
+        elCpf.reportValidity();
+        return;
+    } else { elCpf.setCustomValidity(""); }
+
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regexEmail.test(email)) {
+        elEmail.setCustomValidity("Por favor, insira um e-mail válido.");
+        elEmail.reportValidity();
+        return;
+    } else { elEmail.setCustomValidity(""); }
+
+    const regexSenha = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.,])[A-Za-z\d@$!%*#?&.,]{8,}$/;
+    if (!regexSenha.test(senha)) {
+        elSenha.setCustomValidity("A senha deve ter pelo menos 8 caracteres, com letras, números e símbolos.");
+        elSenha.reportValidity(); 
+        return;
+    } else { elSenha.setCustomValidity(""); }
 
     const dados = { nome, rg, cpf, tel, email, senha, status, cargo };
 
@@ -25,14 +62,27 @@ async function efetuarCadastro() {
         const resultado = await response.json();
 
         if (response.ok) {
-            alert("Sucesso! " + resultado.message);
-            window.location.href = "/login"; 
+            Toast.fire({
+                title: 'Sucesso!',
+                text: resultado.message,
+                icon: 'success',
+                confirmButtonText: 'Ir para o Login'
+            }).then((result) => {
+                if (result.isConfirmed) window.location.href = "/login";
+            });
         } else {
-            alert("Erro no cadastro: " + (resultado.error || "Verifique os dados e tente novamente."));
+            Toast.fire({
+                title: 'Erro no Cadastro',
+                text: resultado.error || "Verifique os dados.",
+                icon: 'error'
+            });
         }
     } catch (error) {
-        console.error("Erro na requisição:", error);
-        alert("Erro crítico: Não foi possível conectar ao servidor.");
+        Toast.fire({
+            title: 'Erro Crítico',
+            text: 'Não foi possível conectar ao servidor.',
+            icon: 'error'
+        });
     }
 }
 
@@ -44,7 +94,11 @@ async function efetuarLogin() {
     const senha = senhaField.value.trim();
 
     if (!email || !senha) {
-        alert("Por favor, informe o e-mail e a senha.");
+        Toast.fire({
+            title: 'Atenção',
+            text: 'Por favor, informe o e-mail e a senha.',
+            icon: 'warning'
+        });
         return;
     }
 
@@ -60,11 +114,18 @@ async function efetuarLogin() {
         if (response.ok) {
             window.location.href = "/"; 
         } else {
-            alert("Falha no Login: " + (resultado.error || "Credenciais inválidas."));
+            Toast.fire({
+                title: 'Falha no Login',
+                text: resultado.error || "Credenciais inválidas.",
+                icon: 'error'
+            });
             senhaField.value = ""; 
         }
     } catch (error) {
-        console.error("Erro na requisição:", error);
-        alert("Erro crítico: Não foi possível conectar ao servidor.");
+        Toast.fire({
+            title: 'Erro de Conexão',
+            text: 'Servidor offline ou erro de rede.',
+            icon: 'error'
+        });
     }
 }

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
-import database, models, os
+import database, models, os, sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -169,9 +169,14 @@ def deletar_anexo(id):
 def cadastro():
     if request.method == 'POST':
         dados = request.get_json()
+        senha = dados.get('senha')
         
         if not dados.get('email') or not dados.get('senha'):
             return jsonify({"error": "E-mail e senha são obrigatórios"}), 400
+
+        senha_segura = generate_password_hash(senha)
+
+        conn = None
 
         try:
             conn = database.conectar()
@@ -181,7 +186,7 @@ def cadastro():
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 dados['nome'], dados['rg'], dados['cpf'], 
-                dados['tel'], dados['email'], dados['senha'], 
+                dados['tel'], dados['email'], senha_segura, 
                 dados['status'], dados['cargo']
             ))
             conn.commit()
@@ -190,7 +195,11 @@ def cadastro():
         except sqlite3.IntegrityError:
             return jsonify({"error": "Este CPF ou E-mail já está cadastrado!"}), 400
         except Exception as e:
-            return jsonify({"error": "Erro interno no servidor"}), 500
+            return jsonify({"error": f"Erro interno: {str(e)}"}), 500
+        
+        finally:
+            if conn:
+                conn.close()
 
     return render_template('cadastrar.html')
 
@@ -199,7 +208,7 @@ def login():
     if request.method == 'POST':
         dados = request.get_json()
         email = dados.get('email')
-        senha = dados.get('senha')
+        senha_digitada = dados.get('senha')
 
         conn = database.conectar()
         cursor = conn.cursor()
@@ -207,14 +216,14 @@ def login():
         conn.close()
 
         if usuario:
-            if usuario['senha'] == senha:
+            if check_password_hash(usuario['senha'], senha_digitada):
                 session['usuario_id'] = usuario['id']
                 session['usuario_nome'] = usuario['nome']
                 return jsonify({"success": True}), 200
             else:
-                return jsonify({"success": False, "error": "Senha incorreta!"}), 401
+                return jsonify({"success": False, "error": "E-mail ou senha incorretos!"}), 401
         
-        return jsonify({"success": False, "error": "E-mail não encontrado!"}), 404
+        return jsonify({"success": False, "error": "E-mail ou senha incorretos!"}), 404
 
     return render_template('login.html')
 
